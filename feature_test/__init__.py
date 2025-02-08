@@ -1,1 +1,1 @@
-# -*- coding: utf-8 -*-\n# @Time    : 2024/1/18 上午11:41\n# @Author  : sudoskys\nfrom fast_langdetect import detect, detect_multilingual, detect_language\n\ndef test_detect_multilingual():\n    """\n    Test the detect_multilingual function with a mixed language string.\n    \
+# -*- coding: utf-8 -*-\n# @Time    : 2024/1/18 上午11:41\n# @Author  : sudoskys\nfrom fast_langdetect import detect, detect_multilingual, detect_language\n\ndef test_detect_multilingual():\n    """\n    Test the detect_multilingual function with a mixed language string.\n    \\
