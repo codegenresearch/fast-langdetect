@@ -17,7 +17,10 @@ FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 # Silences warnings as the package does not properly use the python 'warnings' package
 # see https://github.com/facebookresearch/fastText/issues/1056
-fasttext.FastText.eprint = lambda *args, **kwargs: None
+try:
+    fasttext.FastText.eprint = lambda *args, **kwargs: None
+except Exception as e:
+    logger.error(f"Error silencing fastText warnings: {e}")
 
 
 class DetectError(Exception):
@@ -29,8 +32,8 @@ def get_model_map(low_memory=False):
     """
     Get the model map based on the low memory flag.
 
-    :param low_memory: Whether to use low memory mode.
-    :return: A tuple containing the mode, cache path, model name, and model URL.
+    :param low_memory: Use low memory mode if True.
+    :return: Tuple of mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -42,9 +45,9 @@ def get_model_loaded(low_memory: bool = False, download_proxy: str = None) -> fa
     """
     Load the appropriate FastText model.
 
-    :param low_memory: Whether to use low memory mode.
+    :param low_memory: Use low memory mode if True.
     :param download_proxy: Proxy server for downloading the model.
-    :return: The loaded FastText model.
+    :return: Loaded FastText model.
     :raises DetectError: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
@@ -77,10 +80,10 @@ def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = No
     """
     Detect the language of a given text.
 
-    :param text: The text to detect the language of.
-    :param low_memory: Whether to use low memory mode.
+    :param text: Text to detect the language of.
+    :param low_memory: Use low memory mode if True.
     :param model_download_proxy: Proxy server for downloading the model.
-    :return: A dictionary with the detected language and its confidence score.
+    :return: Dictionary with detected language and confidence score.
     :raises DetectError: If there is an error during language detection.
     """
     model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
@@ -98,13 +101,13 @@ def detect_multilingual(text: str, *, low_memory: bool = True, model_download_pr
     """
     Detect multiple languages in a given text.
 
-    :param text: The text to detect languages in.
-    :param low_memory: Whether to use low memory mode.
+    :param text: Text to detect languages in.
+    :param low_memory: Use low memory mode if True.
     :param model_download_proxy: Proxy server for downloading the model.
     :param k: Number of top predictions to return.
     :param threshold: Score threshold for predictions.
     :param on_unicode_error: How to handle Unicode errors during prediction.
-    :return: A list of dictionaries with detected languages and their confidence scores.
+    :return: List of dictionaries with detected languages and confidence scores.
     :raises DetectError: If there is an error during multilingual language detection.
     """
     model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
