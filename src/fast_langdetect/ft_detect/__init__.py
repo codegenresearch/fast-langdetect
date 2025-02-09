@@ -15,8 +15,8 @@ def is_japanese(string):
     """
     Check if the string contains Japanese characters.
 
-    :param string: str - The string to check.
-    :return: bool - True if the string contains Japanese characters, False otherwise.
+    :param string: The string to check.
+    :return: True if the string contains Japanese characters, False otherwise.
     """
     for ch in string:
         if 0x3040 < ord(ch) < 0x30FF:
@@ -26,11 +26,11 @@ def is_japanese(string):
 
 def detect_language(sentence, *, low_memory: bool = True):
     """
-    Detect the language of the given sentence and return the language code in uppercase.
+    Detect language.
 
-    :param sentence: str - The sentence to detect the language of.
-    :param low_memory: bool - Whether to use low memory mode (default: True).
-    :return: str - The detected language code in uppercase.
+    :param sentence: The sentence to detect the language of.
+    :param low_memory: Whether to use low memory mode (default: True).
+    :return: The detected language code in uppercase.
     """
     lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
     if lang_code == "JA" and not is_japanese(sentence):
@@ -40,12 +40,12 @@ def detect_language(sentence, *, low_memory: bool = True):
 
 def detect_langs(sentence, *, low_memory: bool = True):
     """
-    Detect the language of the given sentence and return the language code in uppercase.
+    Detect language.
     Note: This function is deprecated. Use detect_language instead.
 
-    :param sentence: str - The sentence to detect the language of.
-    :param low_memory: bool - Whether to use low memory mode (default: True).
-    :return: str - The detected language code in uppercase.
+    :param sentence: The sentence to detect the language of.
+    :param low_memory: Whether to use low memory mode (default: True).
+    :return: The detected language code in uppercase.
     """
-    logger.warning("The function detect_langs is deprecated. Use detect_language instead.")
+    logger.warning("Function detect_langs is deprecated. Use detect_language instead.")
     return detect_language(sentence, low_memory=low_memory)
