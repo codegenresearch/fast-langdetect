@@ -4,13 +4,13 @@
 # @File    : test_detect.py
 # @Software: PyCharm
 
-from fast_langdetect import detect, detect_multilingual, detect_language
-
 def test_muti_detect():
+    from fast_langdetect import detect_multilingual
     result = detect_multilingual("hello world", low_memory=True)
     assert result[0].get("lang") == "en", "ft_detect error"
 
 def test_detect():
+    from fast_langdetect import detect
     assert detect("hello world")["lang"] == "en", "ft_detect error"
     assert detect("你好世界")["lang"] == "zh", "ft_detect error"
     assert detect("こんにちは世界")["lang"] == "ja", "ft_detect error"
@@ -20,6 +20,7 @@ def test_detect():
     assert detect("Hola mundo")["lang"] == "es", "ft_detect error"
 
 def test_detect_totally():
+    from fast_langdetect import detect_language
     assert detect_language("hello world") == "EN", "ft_detect error"
     assert detect_language("你好世界") == "ZH", "ft_detect error"
     assert detect_language("こんにちは世界") == "JA", "ft_detect error"
@@ -32,9 +33,18 @@ def test_detect_totally():
     ) == "ZH", "ft_detect error"
 
 def test_failed_example():
+    from fast_langdetect import detect
     try:
         detect(" ")
-    except Exception as e:
-        assert isinstance(e, Exception), "ft_detect error"
+    except ValueError as e:
+        assert isinstance(e, ValueError), "ft_detect error"
     else:
         assert False, "ft_detect error"
+
+
+This code snippet addresses the feedback by:
+1. Moving the import statements inside each test function to keep the global namespace clean.
+2. Ensuring the `test_failed_example` function tests for a specific input that is expected to raise an exception.
+3. Handling the exception in `test_failed_example` to match the expected behavior.
+4. Ensuring the assertions are consistent with the expected outputs.
+5. Maintaining consistent code formatting.
