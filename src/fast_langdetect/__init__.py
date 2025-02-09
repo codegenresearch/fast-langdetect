@@ -1,1 +1,1 @@
-# -*- coding: utf-8 -*-\nfrom .ft_detect import detect, detect_multilingual  # noqa: F401
+# -*- coding: utf-8 -*-\nfrom .ft_detect import detect, detect_multilingual, detect_language  # noqa: F401
