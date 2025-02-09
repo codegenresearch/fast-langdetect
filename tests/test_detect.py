@@ -45,5 +45,5 @@ def test_failed_example():
     from fast_langdetect import detect
     try:
         detect("This is a test for an unsupported language")
-    except Exception as e:
+    except ValueError as e:
         assert str(e) == "ft_detect error", "ft_detect error"
