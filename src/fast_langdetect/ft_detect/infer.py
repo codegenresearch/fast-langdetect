@@ -24,14 +24,16 @@ except Exception:
 
 
 class DetectError(Exception):
+    """Custom exception for detection errors."""
     pass
 
 
 def get_model_map(low_memory=False):
     """
-    Getting model map
-    :param low_memory:
-    :return:
+    Get the model map based on the low_memory flag.
+
+    :param low_memory: Boolean flag to indicate whether to use the low memory model.
+    :return: Tuple containing mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -42,12 +44,14 @@ def get_model_map(low_memory=False):
 def get_model_loaded(
         low_memory: bool = False,
         download_proxy: str = None
-):
+) -> fasttext.FastText._FastText:
     """
-    Getting model loaded
-    :param low_memory:
-    :param download_proxy:
-    :return:
+    Load the appropriate model based on the low_memory flag.
+
+    :param low_memory: Boolean flag to indicate whether to use the low memory model.
+    :param download_proxy: Proxy for downloading the model.
+    :return: Loaded fastText model.
+    :raises Exception: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
     loaded = MODELS.get(mode, None)
@@ -77,6 +81,19 @@ def detect(text: str, *,
            low_memory: bool = True,
            model_download_proxy: str = None
            ) -> Dict[str, Union[str, float]]:
+    """
+    Detect the language of a given text.
+
+    :param text: The text to detect the language of.
+    :param low_memory: Boolean flag to indicate whether to use the low memory model.
+    :param model_download_proxy: Proxy for downloading the model.
+    :return: Dictionary containing the detected language and its score.
+    :raises DetectError: If there is an error during detection.
+    :raises ValueError: If the input text contains multiple lines.
+    """
+    # Assumption: The input text should be a single line.
+    if "\n" in text:
+        raise ValueError("Input text should be a single line.")
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
@@ -97,6 +114,19 @@ def detect_multilingual(text: str, *,
                         threshold: float = 0.0,
                         on_unicode_error: str = "strict"
                         ) -> List[dict]:
+    """
+    Detect multiple languages in a given text.
+
+    :param text: The text to detect languages in.
+    :param low_memory: Boolean flag to indicate whether to use the low memory model.
+    :param model_download_proxy: Proxy for downloading the model.
+    :param k: Number of top predictions to return.
+    :param threshold: Minimum score for a language to be included in the results.
+    :param on_unicode_error: Error handling strategy for Unicode errors.
+    :return: List of dictionaries containing detected languages and their scores.
+    :raises DetectError: If there is an error during multilingual detection.
+    """
+    # Assumption: The input text can contain multiple lines.
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
@@ -157,8 +187,8 @@ def test_detect_low_memory():
 def test_failed_example_low_memory():
     try:
         detect("hello world\nNEW LINE", low_memory=True)
-    except DetectError as e:
-        assert isinstance(e, DetectError), "Detection exception error"
+    except ValueError as e:
+        assert isinstance(e, ValueError), "Detection exception error for multi-line text"
     try:
         detect_multilingual("hello world\nNEW LINE", low_memory=True)
     except DetectError as e:
