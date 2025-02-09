@@ -28,7 +28,7 @@ class DetectError(Exception):
     pass
 
 
-def get_model_map(low_memory=False):
+def get_model_map(low_memory: bool) -> tuple:
     """
     Get the model map based on the low memory flag.
 
@@ -51,26 +51,26 @@ def get_model_loaded(low_memory: bool = False, download_proxy: str = None) -> fa
     :raises Exception: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
-    loaded = MODELS.get(mode, None)
-    if loaded:
-        return loaded
     model_path = os.path.join(cache, name)
+
+    if MODELS.get(mode):
+        return MODELS[mode]
+
     if Path(model_path).exists():
         if Path(model_path).is_dir():
             raise Exception(f"{model_path} is a directory")
         try:
-            loaded_model = fasttext.load_model(model_path)
-            MODELS[mode] = loaded_model
-            return loaded_model
+            model = fasttext.load_model(model_path)
+            MODELS[mode] = model
+            return model
         except Exception as e:
             logger.error(f"Error loading model {model_path}: {e}")
-            raise
 
     try:
         download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
-        loaded_model = fasttext.load_model(model_path)
-        MODELS[mode] = loaded_model
-        return loaded_model
+        model = fasttext.load_model(model_path)
+        MODELS[mode] = model
+        return model
     except Exception as e:
         logger.error(f"Error downloading or loading model {model_path}: {e}")
         raise
