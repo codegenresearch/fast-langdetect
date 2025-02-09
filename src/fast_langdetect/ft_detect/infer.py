@@ -16,7 +16,7 @@ MODELS = {"low_mem": None, "high_mem": None}
 FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 try:
-    # silences warnings as the package does not properly use the python 'warnings' package
+    # Silences warnings as the package does not properly use the python 'warnings' package
     # see https://github.com/facebookresearch/fastText/issues/1056
     fasttext.FastText.eprint = lambda *args, **kwargs: None
 except Exception:
@@ -24,14 +24,16 @@ except Exception:
 
 
 class DetectError(Exception):
+    """Custom exception for language detection errors."""
     pass
 
 
 def get_model_map(low_memory=False):
     """
-    Getting model map
-    :param low_memory:
-    :return:
+    Get the model map based on the low_memory flag.
+
+    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :return: A tuple containing the mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -42,12 +44,14 @@ def get_model_map(low_memory=False):
 def get_model_loaded(
         low_memory: bool = False,
         download_proxy: str = None
-):
+) -> fasttext.FastText._FastText:
     """
-    Getting model loaded
-    :param low_memory:
-    :param download_proxy:
-    :return:
+    Load the appropriate FastText model based on the low_memory flag.
+
+    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param download_proxy: Proxy server for downloading the model.
+    :return: The loaded FastText model.
+    :raises Exception: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
     loaded = MODELS.get(mode, None)
@@ -77,6 +81,16 @@ def detect(text: str, *,
            low_memory: bool = True,
            model_download_proxy: str = None
            ) -> Dict[str, Union[str, float]]:
+    """
+    Detect the language of a given text.
+
+    :param text: The text to detect the language of.
+    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param model_download_proxy: Proxy server for downloading the model.
+    :return: A dictionary containing the detected language and its confidence score.
+    :raises DetectError: If there is an error during language detection.
+    :raises ValueError: If the prediction process fails.
+    """
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
@@ -86,6 +100,9 @@ def detect(text: str, *,
             "lang": label,
             "score": score,
         }
+    except ValueError as ve:
+        logger.error(f"ValueError during prediction for text '{text}': {ve}")
+        raise DetectError(f"Language detection failed for text '{text}'") from ve
     except Exception as e:
         logger.error(f"Error detecting language for text '{text}': {e}")
         raise DetectError(f"Language detection failed for text '{text}'") from e
@@ -98,6 +115,19 @@ def detect_multilingual(text: str, *,
                         threshold: float = 0.0,
                         on_unicode_error: str = "strict"
                         ) -> List[dict]:
+    """
+    Detect multiple languages in a given text.
+
+    :param text: The text to detect languages in.
+    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param model_download_proxy: Proxy server for downloading the model.
+    :param k: The number of top predictions to return.
+    :param threshold: The score threshold for predictions.
+    :param on_unicode_error: How to handle Unicode errors during prediction.
+    :return: A list of dictionaries, each containing a detected language and its confidence score.
+    :raises DetectError: If there is an error during multilingual language detection.
+    :raises ValueError: If the prediction process fails.
+    """
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
@@ -110,6 +140,9 @@ def detect_multilingual(text: str, *,
                 "score": score,
             })
         return sorted(detect_result, key=lambda i: i['score'], reverse=True)
+    except ValueError as ve:
+        logger.error(f"ValueError during prediction for text '{text}': {ve}")
+        raise DetectError(f"Multilingual language detection failed for text '{text}'") from ve
     except Exception as e:
         logger.error(f"Error detecting multilingual languages for text '{text}': {e}")
         raise DetectError(f"Multilingual language detection failed for text '{text}'") from e
