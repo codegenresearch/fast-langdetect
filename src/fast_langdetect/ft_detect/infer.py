@@ -28,7 +28,7 @@ class DetectError(Exception):
     pass
 
 
-def get_model_map(low_memory=False):
+def get_model_map(low_memory: bool = False) -> tuple:
     """
     Get the model map based on the low_memory flag.
 
@@ -41,7 +41,7 @@ def get_model_map(low_memory=False):
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def get_model_loaded(low_memory=False, download_proxy=None):
+def get_model_loaded(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
     """
     Load the appropriate model based on the low_memory flag.
 
@@ -74,7 +74,7 @@ def get_model_loaded(low_memory=False, download_proxy=None):
     return loaded_model
 
 
-def detect(text, *, low_memory=True, model_download_proxy=None):
+def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = None) -> Dict[str, Union[str, float]]:
     """
     Detect the language of a given text.
 
@@ -84,22 +84,20 @@ def detect(text, *, low_memory=True, model_download_proxy=None):
     :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy for downloading the model.
     :return: Dictionary with detected language and score.
-    :raises DetectError: If there is an error during detection.
     :raises ValueError: If the input text contains multiple lines.
+    :raises DetectError: If there is an error during detection.
     """
     if "\n" in text:
         raise ValueError("Input text should be a single line.")
-    try:
-        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
-        labels, scores = model.predict(text)
-        label = labels[0].replace("__label__", '')
-        score = min(float(scores[0]), 1.0)
-        return {"lang": label, "score": score}
-    except Exception as e:
-        raise DetectError(f"Error during detection: {e}")
+    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+    labels, scores = model.predict(text)
+    label = labels[0].replace("__label__", '')
+    score = min(float(scores[0]), 1.0)
+    return {"lang": label, "score": score}
 
 
-def detect_multilingual(text, *, low_memory=True, model_download_proxy=None, k=5, threshold=0.0, on_unicode_error="strict"):
+def detect_multilingual(text: str, *, low_memory: bool = True, model_download_proxy: str = None, k: int = 5,
+                        threshold: float = 0.0, on_unicode_error: str = "strict") -> List[Dict[str, Union[str, float]]]:
     """
     Detect multiple languages in a given text.
 
@@ -112,12 +110,10 @@ def detect_multilingual(text, *, low_memory=True, model_download_proxy=None, k=5
     :return: List of dictionaries with detected languages and scores.
     :raises DetectError: If there is an error during multilingual detection.
     """
-    try:
-        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
-        labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
-        return [{"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)} for label, score in zip(labels, scores)]
-    except Exception as e:
-        raise DetectError(f"Error during multilingual detection: {e}")
+    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+    labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
+    results = [{"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)} for label, score in zip(labels, scores)]
+    return sorted(results, key=lambda x: x['score'], reverse=True)
 
 
 # Additional test cases for coverage
