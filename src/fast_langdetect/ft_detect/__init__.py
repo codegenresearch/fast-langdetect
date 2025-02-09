@@ -1,37 +1,29 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2024/1/17 下午4:00
-import logging
-
-from .infer import detect
+# @Author  : sudoskys
+# @File    : __init__.py
+from .infer import detect as detect_language
 from .infer import detect_multilingual  # noqa: F401
 
 
-def is_japanese(string):
+def contains_japanese_characters(string):
+    """
+    Check if the string contains Japanese characters.
+    """
     for ch in string:
         if 0x3040 < ord(ch) < 0x30FF:
             return True
     return False
 
 
-def detect_language(sentence, *, low_memory: bool = True):
+def detect_language_code(sentence, *, low_memory: bool = True):
     """
-    Detect language
+    Detect language and return the language code in uppercase.
     :param sentence: str sentence
     :param low_memory: bool (default: True) whether to use low memory mode
     :return: ZH, EN, JA, KO, FR, DE, ES, .... (two uppercase letters)
     """
-    lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
-    if lang_code == "JA" and not is_japanese(sentence):
-        lang_code = "ZH"
-    return lang_code
-
-
-def detect_langs(sentence, *, low_memory: bool = True):
-    """
-    Detect language
-    :param sentence: str sentence
-    :param low_memory: bool (default: True) whether to use low memory mode
-    :return: ZH, EN, JA, KO, FR, DE, ES, .... (two uppercase letters)
-    """
-    logging.warning("detect_langs is deprecated, use detect_language instead")
-    return detect_language(sentence, low_memory=low_memory)
+    detected_lang = detect_language(sentence, low_memory=low_memory).get("lang").upper()
+    if detected_lang == "JA" and not contains_japanese_characters(sentence):
+        detected_lang = "ZH"
+    return detected_lang
