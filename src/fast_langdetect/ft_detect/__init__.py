@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from .infer import detect
+from .infer import detect, detect_multilingual
 
 # Setting up logging for deprecation warnings
 logger = logging.getLogger(__name__)
