@@ -2,6 +2,7 @@
 # @Time    : 2024/1/17 下午4:00
 # @Author  : sudoskys
 # @File    : __init__.py
+
 from .infer import detect
 from .infer import detect_multilingual  # noqa: F401
 import logging
@@ -13,6 +14,9 @@ logger = logging.getLogger(__name__)
 def is_japanese(string):
     """
     Check if the string contains Japanese characters.
+
+    :param string: str - The string to check.
+    :return: bool - True if the string contains Japanese characters, False otherwise.
     """
     for ch in string:
         if 0x3040 < ord(ch) < 0x30FF:
@@ -22,7 +26,7 @@ def is_japanese(string):
 
 def detect_language(sentence, *, low_memory: bool = True):
     """
-    Detect language and return the language code in uppercase.
+    Detect the language of the given sentence and return the language code in uppercase.
 
     :param sentence: str - The sentence to detect the language of.
     :param low_memory: bool - Whether to use low memory mode (default: True).
@@ -36,7 +40,8 @@ def detect_language(sentence, *, low_memory: bool = True):
 
 def detect_langs(sentence, *, low_memory: bool = True):
     """
-    Detect language and return the language code in uppercase.
+    Detect the language of the given sentence and return the language code in uppercase.
+    Note: This function is deprecated. Use detect_language instead.
 
     :param sentence: str - The sentence to detect the language of.
     :param low_memory: bool - Whether to use low memory mode (default: True).
