@@ -3,30 +3,32 @@
 # @Author  : sudoskys
 # @File    : __init__.py.py
 # @Software: PyCharm
-from fast_langdetect import detect, detect_multilingual, detect_language, parse_sentence
+from fast_langdetect import detect, detect_multilingual, detect_language
 
-# Testing parse_sentence function
-print(parse_sentence("你好世界"))  # Testing Chinese
-print(parse_sentence("你好世界！Hello, world！Привет, мир！"))  # Testing mixed languages: Chinese, English, Russian
+# 测试 detect_multilingual 函数
+# 预期输出: [{'lang': 'en', 'prob': ...}, {'lang': 'zh', 'prob': ...}, {'lang': 'ru', 'prob': ...}]
+print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))  # 测试混合语言: 英语, 中文, 俄语
 
-# Testing detect_multilingual function
-# Expected output: [{'lang': 'en', 'prob': ...}, {'lang': 'zh', 'prob': ...}, {'lang': 'ru', 'prob': ...}]
-print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))  # Testing mixed languages: English, Chinese, Russian
+# 测试 detect 函数
+print(detect("hello world"))  # 测试英语, 预期输出: 'en'
+print(detect("Привет, мир!"))  # 测试俄语, 预期输出: 'ru'
+print(detect("こんにちは世界"))  # 测试日语, 预期输出: 'ja'
+print(detect("안녕하세요 세계"))  # 测试韩语, 预期输出: 'ko'
+print(detect("Bonjour le monde"))  # 测试法语, 预期输出: 'fr'
+print(detect("Hallo Welt"))  # 测试德语, 预期输出: 'de'
+print(detect("Hola mundo"))  # 测试西班牙语, 预期输出: 'es'
+print(detect("Ciao mondo"))  # 测试意大利语, 预期输出: 'it'
+print(detect("Olá mundo"))  # 测试葡萄牙语, 预期输出: 'pt'
+print(detect("Merhaba dünya"))  # 测试土耳其语, 预期输出: 'tr'
 
-# Testing detect function
-print(detect("hello world"))  # Testing English
-print(detect("Привет, мир!"))  # Testing Russian
-print(detect("こんにちは世界"))  # Testing Japanese
-print(detect("안녕하세요 세계"))  # Testing Korean
-print(detect("Bonjour le monde"))  # Testing French
-print(detect("Hallo Welt"))  # Testing German
-print(detect("Hola mundo"))  # Testing Spanish
-
-# Testing detect_language function
-print(detect_language("hello world"))  # Testing English, expected output: 'EN'
-print(detect_language("你好世界"))  # Testing Chinese, expected output: 'ZH'
-print(detect_language("こんにちは世界"))  # Testing Japanese, expected output: 'JA'
-print(detect_language("안녕하세요 세계"))  # Testing Korean, expected output: 'KO'
-print(detect_language("Bonjour le monde"))  # Testing French, expected output: 'FR'
-print(detect_language("Hallo Welt"))  # Testing German, expected output: 'DE'
-print(detect_language("Hola mundo"))  # Testing Spanish, expected output: 'ES'
+# 测试 detect_language 函数
+print(detect_language("hello world"))  # 测试英语, 预期输出: 'EN'
+print(detect_language("你好世界"))  # 测试中文, 预期输出: 'ZH'
+print(detect_language("こんにちは世界"))  # 测试日语, 预期输出: 'JA'
+print(detect_language("안녕하세요 세계"))  # 测试韩语, 预期输出: 'KO'
+print(detect_language("Bonjour le monde"))  # 测试法语, 预期输出: 'FR'
+print(detect_language("Hallo Welt"))  # 测试德语, 预期输出: 'DE'
+print(detect_language("Hola mundo"))  # 测试西班牙语, 预期输出: 'ES'
+print(detect_language("Ciao mondo"))  # 测试意大利语, 预期输出: 'IT'
+print(detect_language("Olá mundo"))  # 测试葡萄牙语, 预期输出: 'PT'
+print(detect_language("Merhaba dünya"))  # 测试土耳其语, 预期输出: 'TR'
