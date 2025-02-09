@@ -4,11 +4,12 @@
 # @File    : test_detect.py
 # @Software: PyCharm
 
+from fast_langdetect import detect, detect_language, detect_multilingual
+
 def test_muti_detect():
     """
     Test the detect_multilingual function with low memory mode enabled.
     """
-    from fast_langdetect.ft_detect import detect_multilingual
     result = detect_multilingual("hello world", low_memory=True)
     assert result[0].get("lang") == "en", "ft_detect error"
 
@@ -16,7 +17,6 @@ def test_detect():
     """
     Test the detect function for various languages.
     """
-    from fast_langdetect import detect
     assert detect("hello world")["lang"] == "en", "ft_detect error"
     assert detect("你好世界")["lang"] == "zh", "ft_detect error"
     assert detect("こんにちは世界")["lang"] == "ja", "ft_detect error"
@@ -27,7 +27,6 @@ def test_detect_totally():
     """
     Test the detect_language function for various languages.
     """
-    from fast_langdetect import detect_language
     assert detect_language("hello world") == "EN", "ft_detect error"
     assert detect_language("你好世界") == "ZH", "ft_detect error"
     assert detect_language("こんにちは世界") == "JA", "ft_detect error"
@@ -42,8 +41,7 @@ def test_failed_example():
     """
     Test the detect function with an unsupported language.
     """
-    from fast_langdetect import detect
     try:
         detect("This is a test for an unsupported language")
-    except Exception as e:
-        assert isinstance(e, Exception), "ft_detect error"
+    except ValueError as e:
+        assert isinstance(e, ValueError), "ft_detect error"
