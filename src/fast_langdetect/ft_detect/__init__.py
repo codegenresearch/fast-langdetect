@@ -4,7 +4,11 @@
 # @File    : __init__.py
 from .infer import detect
 from .infer import detect_multilingual  # noqa: F401
-import warnings
+import logging
+
+# Setting up logging for deprecation warnings
+logging.basicConfig(level=logging.WARNING)
+logger = logging.getLogger(__name__)
 
 
 def is_japanese(string):
@@ -17,12 +21,9 @@ def is_japanese(string):
     return False
 
 
-def detect_language_code(sentence, *, low_memory: bool = True):
+def detect_language(sentence, *, low_memory: bool = True):
     """
     Detect language and return the language code in uppercase.
-    :param sentence: str sentence
-    :param low_memory: bool (default: True) whether to use low memory mode
-    :return: ZH, EN, JA, KO, FR, DE, ES, .... (two uppercase letters)
     """
     lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
     if lang_code == "JA" and not is_japanese(sentence):
@@ -33,9 +34,6 @@ def detect_language_code(sentence, *, low_memory: bool = True):
 def detect_langs(sentence, *, low_memory: bool = True):
     """
     Detect language and return the language code in uppercase.
-    :param sentence: str sentence
-    :param low_memory: bool (default: True) whether to use low memory mode
-    :return: ZH, EN, JA, KO, FR, DE, ES, .... (two uppercase letters)
     """
-    warnings.warn("The function detect_langs is deprecated. Use detect_language_code instead.", DeprecationWarning)
-    return detect_language_code(sentence, low_memory=low_memory)
+    logger.warning("The function detect_langs is deprecated. Use detect_language instead.")
+    return detect_language(sentence, low_memory=low_memory)
