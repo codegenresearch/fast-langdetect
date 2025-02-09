@@ -2,11 +2,11 @@
 # @Time    : 2024/1/17 下午4:00
 # @Author  : sudoskys
 # @File    : __init__.py
+
+import logging
 from .infer import detect
 from .infer import detect_multilingual  # noqa: F401
 from .ft_detect import detect_language  # Ensure this function is correctly imported
-
-import logging
 
 # Setting up logging
 logging.basicConfig(level=logging.WARNING)
