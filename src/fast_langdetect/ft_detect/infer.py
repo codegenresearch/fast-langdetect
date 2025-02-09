@@ -38,14 +38,14 @@ def get_model_map(low_memory=False):
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def load_model(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
+def get_model_loaded(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
     """
     Load the appropriate FastText model.
 
     :param low_memory: Whether to use low memory mode.
     :param download_proxy: Proxy server for downloading the model.
     :return: The loaded FastText model.
-    :raises Exception: If there is an error loading or downloading the model.
+    :raises DetectError: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
     loaded = MODELS.get(mode, None)
@@ -54,15 +54,23 @@ def load_model(low_memory: bool = False, download_proxy: str = None) -> fasttext
     model_path = os.path.join(cache, name)
     if Path(model_path).exists():
         if Path(model_path).is_dir():
-            raise Exception(f"{model_path} is a directory")
+            raise DetectError(f"{model_path} is a directory")
+        try:
+            loaded_model = fasttext.load_model(model_path)
+            MODELS[mode] = loaded_model
+            return loaded_model
+        except Exception as e:
+            logger.error(f"Error loading model {model_path}: {e}")
+            raise DetectError(f"Error loading model {model_path}: {e}")
+
+    try:
+        download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
         loaded_model = fasttext.load_model(model_path)
         MODELS[mode] = loaded_model
         return loaded_model
-
-    download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
-    loaded_model = fasttext.load_model(model_path)
-    MODELS[mode] = loaded_model
-    return loaded_model
+    except Exception as e:
+        logger.error(f"Error downloading or loading model {model_path}: {e}")
+        raise DetectError(f"Error downloading or loading model {model_path}: {e}")
 
 
 def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = None) -> Dict[str, Union[str, float]]:
@@ -75,7 +83,7 @@ def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = No
     :return: A dictionary with the detected language and its confidence score.
     :raises DetectError: If there is an error during language detection.
     """
-    model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
+    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
     labels, scores = model.predict(text)
     label = labels[0].replace("__label__", '')
     score = min(float(scores[0]), 1.0)
@@ -99,7 +107,7 @@ def detect_multilingual(text: str, *, low_memory: bool = True, model_download_pr
     :return: A list of dictionaries with detected languages and their confidence scores.
     :raises DetectError: If there is an error during multilingual language detection.
     """
-    model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
+    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
     labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
     detect_result = []
     for label, score in zip(labels, scores):
