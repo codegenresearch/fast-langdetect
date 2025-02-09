@@ -3,9 +3,6 @@
 # @Author  : sudoskys
 # @File    : test_detect.py
 # @Software: PyCharm
-import warnings
-
-warnings.warn("The function `detect_langs` is deprecated. Use `detect_multiple_languages` instead.", DeprecationWarning)
 
 def test_muti_detect():
     from fast_langdetect.ft_detect import detect_multilingual
@@ -14,22 +11,30 @@ def test_muti_detect():
 
 def test_detect():
     from fast_langdetect import detect
-    assert detect("hello world").lower() == "en", "ft_detect error"
-    assert detect("你好世界").lower() == "zh", "ft_detect error"
-    assert detect("こんにちは世界").lower() == "ja", "ft_detect error"
-    assert detect("안녕하세요 세계").lower() == "ko", "ft_detect error"
-    assert detect("Bonjour le monde").lower() == "fr", "ft_detect error"
-    assert detect("Hallo Welt").lower() == "de", "ft_detect error"
-    assert detect("Hola mundo").lower() == "es", "ft_detect error"
-    assert detect("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等").lower() == "zh", "ft_detect error"
+    result = detect("hello world")
+    assert result.get('lang') == "en", "ft_detect error"
+    result = detect("你好世界")
+    assert result.get('lang') == "zh", "ft_detect error"
+    result = detect("こんにちは世界")
+    assert result.get('lang') == "ja", "ft_detect error"
+    result = detect("안녕하세요 세계")
+    assert result.get('lang') == "ko", "ft_detect error"
+    result = detect("Bonjour le monde")
+    assert result.get('lang') == "fr", "ft_detect error"
+    result = detect("Hallo Welt")
+    assert result.get('lang') == "de", "ft_detect error"
+    result = detect("Hola mundo")
+    assert result.get('lang') == "es", "ft_detect error"
+    result = detect("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等")
+    assert result.get('lang') == "zh", "ft_detect error"
 
 def test_detect_totally():
     from fast_langdetect import detect_language
-    assert detect_language("hello world").lower() == "en", "ft_detect error"
-    assert detect_language("你好世界").lower() == "zh", "ft_detect error"
-    assert detect_language("こんにちは世界").lower() == "ja", "ft_detect error"
-    assert detect_language("안녕하세요 세계").lower() == "ko", "ft_detect error"
-    assert detect_language("Bonjour le monde").lower() == "fr", "ft_detect error"
-    assert detect_language("Hallo Welt").lower() == "de", "ft_detect error"
-    assert detect_language("Hola mundo").lower() == "es", "ft_detect error"
-    assert detect_language("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等").lower() == "zh", "ft_detect error"
+    assert detect_language("hello world").upper() == "EN", "ft_detect error"
+    assert detect_language("你好世界").upper() == "ZH", "ft_detect error"
+    assert detect_language("こんにちは世界").upper() == "JA", "ft_detect error"
+    assert detect_language("안녕하세요 세계").upper() == "KO", "ft_detect error"
+    assert detect_language("Bonjour le monde").upper() == "FR", "ft_detect error"
+    assert detect_language("Hallo Welt").upper() == "DE", "ft_detect error"
+    assert detect_language("Hola mundo").upper() == "ES", "ft_detect error"
+    assert detect_language("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等").upper() == "ZH", "ft_detect error"
