@@ -2,11 +2,11 @@
 # @Time    : 2024/1/17 下午4:00
 # @Author  : sudoskys
 # @File    : __init__.py
-from .infer import detect as detect_language
+from .infer import detect
 from .infer import detect_multilingual  # noqa: F401
 
 
-def contains_japanese_characters(string):
+def is_japanese(string):
     """
     Check if the string contains Japanese characters.
     :param string: The string to check.
@@ -25,7 +25,7 @@ def detect_language_code(sentence, *, low_memory: bool = True):
     :param low_memory: Whether to use low memory mode.
     :return: Language code as a two uppercase letters string (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
     """
-    detected_lang = detect_language(sentence, low_memory=low_memory).get("lang").upper()
-    if detected_lang == "JA" and not contains_japanese_characters(sentence):
-        detected_lang = "ZH"
-    return detected_lang
+    lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
+    if lang_code == "JA" and not is_japanese(sentence):
+        lang_code = "ZH"
+    return lang_code
