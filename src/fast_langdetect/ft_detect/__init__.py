@@ -3,8 +3,7 @@
 # @Author  : sudoskys
 # @File    : __init__.py
 import logging
-from .infer import detect as detect_language
-from .infer import detect_multilingual  # noqa: F401
+from fast_langdetect.ft_detect import detect, detect_multilingual  # noqa: F401
 
 # Setting up logging
 logging.basicConfig(level=logging.INFO)
@@ -22,12 +21,12 @@ def is_japanese(string):
 
 def detect_language(sentence, *, low_memory: bool = True):
     """
-    Detect the language of the given sentence and return the language code.
+    Detect the language of the given sentence.
     :param sentence: The sentence to detect the language of.
     :param low_memory: Whether to use low memory mode.
     :return: Language code as a two uppercase letters string (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
     """
-    lang_code = detect_language(sentence, low_memory=low_memory).get("lang").upper()
+    lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
     if lang_code == "JA" and not is_japanese(sentence):
         lang_code = "ZH"
     return lang_code
