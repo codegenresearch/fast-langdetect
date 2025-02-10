@@ -46,12 +46,12 @@ def get_model_map(low_memory: bool = False) -> tuple:
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def get_model_loaded(low_memory: bool = False, download_proxy: Optional[str] = None) -> fasttext.FastText._FastText:
+def get_model_loaded(low_memory: bool = False, model_download_proxy: Optional[str] = None) -> fasttext.FastText._FastText:
     """
     Load the appropriate FastText model.
 
     :param low_memory: Use low memory model if True.
-    :param download_proxy: Proxy for downloading the model.
+    :param model_download_proxy: Proxy for downloading the model.
     :return: Loaded FastText model.
     :raises Exception: If there is an error loading or downloading the model.
     """
@@ -69,41 +69,44 @@ def get_model_loaded(low_memory: bool = False, download_proxy: Optional[str] = N
             return loaded_model
         except Exception as e:
             logger.error(f"Error loading model {model_path}: {e}")
+            download(url=url, folder=cache, filename=name, proxy=model_download_proxy, retry_max=3, timeout=20)
             raise
 
-    download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
+    download(url=url, folder=cache, filename=name, proxy=model_download_proxy, retry_max=3, timeout=20)
     loaded_model = fasttext.load_model(model_path)
     MODELS[mode] = loaded_model
     return loaded_model
 
 
-def detect(text: str, *, low_memory: bool = True, download_proxy: Optional[str] = None) -> Dict[str, Union[str, float]]:
+def detect(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None) -> Dict[str, Union[str, float]]:
     """
     Detect the language of a given text.
 
+    Assumes a single line of text and handles whitespace and control characters.
+
     :param text: Input text to detect.
     :param low_memory: Use low memory model if True.
-    :param download_proxy: Proxy for downloading the model.
+    :param model_download_proxy: Proxy for downloading the model.
     :return: Dictionary with detected language and score.
     :raises InvalidTextError: If input text is invalid.
     """
     if not isinstance(text, str) or not text.strip():
         raise InvalidTextError("Input text must be a non-empty string.")
 
-    model = get_model_loaded(low_memory=low_memory, download_proxy=download_proxy)
+    model = get_model_loaded(low_memory=low_memory, model_download_proxy=model_download_proxy)
     labels, scores = model.predict(text)
     label = labels[0].replace("__label__", '')
     score = min(float(scores[0]), 1.0)
     return {"lang": label, "score": score}
 
 
-def detect_multilingual(text: str, *, low_memory: bool = True, download_proxy: Optional[str] = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[dict]:
+def detect_multilingual(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[dict]:
     """
     Detect multiple languages in a given text.
 
     :param text: Input text to detect.
     :param low_memory: Use low memory model if True.
-    :param download_proxy: Proxy for downloading the model.
+    :param model_download_proxy: Proxy for downloading the model.
     :param k: Number of top predictions to return.
     :param threshold: Confidence score threshold.
     :param on_unicode_error: Error handling strategy for Unicode errors.
@@ -113,7 +116,7 @@ def detect_multilingual(text: str, *, low_memory: bool = True, download_proxy: O
     if not isinstance(text, str) or not text.strip():
         raise InvalidTextError("Input text must be a non-empty string.")
 
-    model = get_model_loaded(low_memory=low_memory, download_proxy=download_proxy)
+    model = get_model_loaded(low_memory=low_memory, model_download_proxy=model_download_proxy)
     labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
     detect_result = []
     for label, score in zip(labels, scores):
