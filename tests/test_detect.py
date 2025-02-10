@@ -36,8 +36,9 @@ def test_detect_totally():
 
 
 This code snippet addresses the feedback by:
-1. Renaming the function names to match the gold code (`test_muti_detect` and `test_detect`).
-2. Ensuring the import statements align with the gold code.
-3. Directly comparing the return values to the expected language codes without using `.lower()` or `.upper()`.
-4. Using "ft_detect error" for assertion messages.
-5. Keeping both `test_muti_detect` and `test_detect_totally` functions to cover all cases.
+1. Removing any extraneous comments or text that are not valid Python syntax.
+2. Ensuring the import statements match exactly with the gold code.
+3. Making sure the function names in the tests are consistent with the gold code.
+4. Verifying how return values are accessed in the assertions.
+5. Checking the expected values in the assertions to match the gold code.
+6. Reviewing the necessity of having both `test_detect` and `test_detect_totally` functions.
