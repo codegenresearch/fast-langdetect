@@ -24,14 +24,21 @@ except Exception:
 
 
 class DetectError(Exception):
+    """Custom exception for language detection errors."""
+    pass
+
+
+class InvalidTextError(ValueError):
+    """Exception raised for errors in the input text."""
     pass
 
 
 def get_model_map(low_memory=False):
     """
-    Getting model map
-    :param low_memory:
-    :return:
+    Get the model map based on the low_memory flag.
+
+    :param low_memory: Boolean flag to determine which model to use.
+    :return: Tuple containing mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -42,12 +49,14 @@ def get_model_map(low_memory=False):
 def get_model_loaded(
         low_memory: bool = False,
         download_proxy: str = None
-):
+) -> fasttext.FastText._FastText:
     """
-    Getting model loaded
-    :param low_memory:
-    :param download_proxy:
-    :return:
+    Load the appropriate FastText model based on the low_memory flag.
+
+    :param low_memory: Boolean flag to determine which model to use.
+    :param download_proxy: Proxy for downloading the model if needed.
+    :return: Loaded FastText model.
+    :raises Exception: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
     loaded = MODELS.get(mode, None)
@@ -77,6 +86,19 @@ def detect(text: str, *,
            low_memory: bool = True,
            model_download_proxy: str = None
            ) -> Dict[str, Union[str, float]]:
+    """
+    Detect the language of a given text.
+
+    :param text: The input text to detect the language of.
+    :param low_memory: Boolean flag to determine which model to use.
+    :param model_download_proxy: Proxy for downloading the model if needed.
+    :return: Dictionary containing the detected language and its confidence score.
+    :raises InvalidTextError: If the input text is empty or not a string.
+    :raises DetectError: If there is an error during language detection.
+    """
+    if not isinstance(text, str) or not text.strip():
+        raise InvalidTextError("Input text must be a non-empty string.")
+
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
@@ -98,6 +120,22 @@ def detect_multilingual(text: str, *,
                         threshold: float = 0.0,
                         on_unicode_error: str = "strict"
                         ) -> List[dict]:
+    """
+    Detect multiple languages in a given text.
+
+    :param text: The input text to detect languages in.
+    :param low_memory: Boolean flag to determine which model to use.
+    :param model_download_proxy: Proxy for downloading the model if needed.
+    :param k: Number of top predictions to return.
+    :param threshold: Confidence score threshold for predictions.
+    :param on_unicode_error: Error handling strategy for Unicode errors.
+    :return: List of dictionaries containing detected languages and their confidence scores.
+    :raises InvalidTextError: If the input text is empty or not a string.
+    :raises DetectError: If there is an error during multilingual language detection.
+    """
+    if not isinstance(text, str) or not text.strip():
+        raise InvalidTextError("Input text must be a non-empty string.")
+
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
