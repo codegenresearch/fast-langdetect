@@ -69,7 +69,7 @@ def get_model_loaded(low_memory: bool = False, download_proxy: Optional[str] = N
             return loaded_model
         except Exception as e:
             logger.error(f"Error loading model {model_path}: {e}")
-            raise e
+            raise
 
     download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
     loaded_model = fasttext.load_model(model_path)
@@ -77,47 +77,47 @@ def get_model_loaded(low_memory: bool = False, download_proxy: Optional[str] = N
     return loaded_model
 
 
-def detect(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None) -> Dict[str, Union[str, float]]:
+def detect(text: str, *, low_memory: bool = True, download_proxy: Optional[str] = None) -> Dict[str, Union[str, float]]:
     """
     Detect the language of a given text.
 
     :param text: Input text to detect.
     :param low_memory: Use low memory model if True.
-    :param model_download_proxy: Proxy for downloading the model.
+    :param download_proxy: Proxy for downloading the model.
     :return: Dictionary with detected language and score.
     :raises InvalidTextError: If input text is invalid.
-    :raises DetectError: If language detection fails.
     """
     if not isinstance(text, str) or not text.strip():
         raise InvalidTextError("Input text must be a non-empty string.")
 
-    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+    model = get_model_loaded(low_memory=low_memory, download_proxy=download_proxy)
     labels, scores = model.predict(text)
     label = labels[0].replace("__label__", '')
     score = min(float(scores[0]), 1.0)
     return {"lang": label, "score": score}
 
 
-def detect_multilingual(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[Dict[str, Union[str, float]]]:
+def detect_multilingual(text: str, *, low_memory: bool = True, download_proxy: Optional[str] = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[dict]:
     """
     Detect multiple languages in a given text.
 
     :param text: Input text to detect.
     :param low_memory: Use low memory model if True.
-    :param model_download_proxy: Proxy for downloading the model.
+    :param download_proxy: Proxy for downloading the model.
     :param k: Number of top predictions to return.
     :param threshold: Confidence score threshold.
     :param on_unicode_error: Error handling strategy for Unicode errors.
     :return: List of dictionaries with detected languages and scores.
     :raises InvalidTextError: If input text is invalid.
-    :raises DetectError: If multilingual language detection fails.
     """
     if not isinstance(text, str) or not text.strip():
         raise InvalidTextError("Input text must be a non-empty string.")
 
-    model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+    model = get_model_loaded(low_memory=low_memory, download_proxy=download_proxy)
     labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
-    detect_result = [{"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)} for label, score in zip(labels, scores)]
+    detect_result = []
+    for label, score in zip(labels, scores):
+        detect_result.append({"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)})
     return sorted(detect_result, key=lambda i: i['score'], reverse=True)
 
 
