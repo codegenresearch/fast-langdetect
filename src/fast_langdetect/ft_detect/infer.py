@@ -6,7 +6,7 @@
 import logging
 import os
 from pathlib import Path
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Optional
 
 import fasttext
 from robust_downloader import download
@@ -16,7 +16,7 @@ MODELS = {"low_mem": None, "high_mem": None}
 FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 try:
-    # silences warnings as the package does not properly use the python 'warnings' package
+    # Silences warnings as the package does not properly use the python 'warnings' package
     # see https://github.com/facebookresearch/fastText/issues/1056
     fasttext.FastText.eprint = lambda *args, **kwargs: None
 except Exception:
@@ -33,7 +33,7 @@ class InvalidTextError(ValueError):
     pass
 
 
-def get_model_map(low_memory=False):
+def get_model_map(low_memory: bool = False) -> tuple:
     """
     Get the model map based on the low_memory flag.
 
@@ -46,7 +46,7 @@ def get_model_map(low_memory=False):
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def get_model_loaded(low_memory=False, download_proxy=None):
+def get_model_loaded(low_memory: bool = False, download_proxy: Optional[str] = None) -> fasttext.FastText._FastText:
     """
     Load the appropriate FastText model.
 
@@ -63,9 +63,13 @@ def get_model_loaded(low_memory=False, download_proxy=None):
     if Path(model_path).exists():
         if Path(model_path).is_dir():
             raise Exception(f"{model_path} is a directory")
-        loaded_model = fasttext.load_model(model_path)
-        MODELS[mode] = loaded_model
-        return loaded_model
+        try:
+            loaded_model = fasttext.load_model(model_path)
+            MODELS[mode] = loaded_model
+            return loaded_model
+        except Exception as e:
+            logger.error(f"Error loading model {model_path}: {e}")
+            raise e
 
     download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
     loaded_model = fasttext.load_model(model_path)
@@ -73,7 +77,7 @@ def get_model_loaded(low_memory=False, download_proxy=None):
     return loaded_model
 
 
-def detect(text: str, *, low_memory=True, model_download_proxy=None) -> Dict[str, Union[str, float]]:
+def detect(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None) -> Dict[str, Union[str, float]]:
     """
     Detect the language of a given text.
 
@@ -94,7 +98,7 @@ def detect(text: str, *, low_memory=True, model_download_proxy=None) -> Dict[str
     return {"lang": label, "score": score}
 
 
-def detect_multilingual(text: str, *, low_memory=True, model_download_proxy=None, k=5, threshold=0.0, on_unicode_error="strict") -> List[dict]:
+def detect_multilingual(text: str, *, low_memory: bool = True, model_download_proxy: Optional[str] = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[Dict[str, Union[str, float]]]:
     """
     Detect multiple languages in a given text.
 
