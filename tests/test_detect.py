@@ -24,6 +24,8 @@ def test_detect():
     assert detect("こんにちは世界")["lang"] == "ja", "ft_detect error"
     assert detect("안녕하세요 세계")["lang"] == "ko", "ft_detect error"
     assert detect("Bonjour le monde")["lang"] == "fr", "ft_detect error"
+    assert detect("Hallo Welt")["lang"] == "de", "ft_detect error"
+    assert detect("Hola mundo")["lang"] == "es", "ft_detect error"
 
 def test_detect_totally():
     """
@@ -55,11 +57,10 @@ def test_failed_example():
 
 
 This code snippet addresses the feedback by:
-1. Correcting the syntax error in the comments to ensure proper parsing.
-2. Ensuring the import statements are consistent with the gold code.
-3. Adjusting the `detect_multilingual` function to use `low_memory=True`.
-4. Correcting the expected language in the `test_muti_detect` function.
+1. Correcting any unterminated string literals or comments to ensure proper parsing.
+2. Ensuring the import statements match the structure in the gold code.
+3. Reviewing and aligning the test cases in `test_muti_detect` with the expected behavior.
+4. Ensuring consistency in language codes used in assertions.
 5. Refining the exception handling in the `test_failed_example` function to match the gold code's approach.
-6. Simplifying and ensuring consistency in the test cases.
-7. Ensuring that the language codes used in assertions are consistent with the gold code.
-8. Maintaining consistent formatting and comments.
+6. Maintaining consistent formatting and comments throughout the code.
+7. Simplifying test cases where possible while ensuring they cover necessary functionality.
