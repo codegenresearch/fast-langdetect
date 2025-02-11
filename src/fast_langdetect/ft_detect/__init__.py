@@ -15,8 +15,8 @@ def is_japanese(string):
     """
     Check if the string contains Japanese characters.
 
-    :param string: The string to check.
-    :return: True if the string contains Japanese characters, False otherwise.
+    :param string: str - The string to check.
+    :return: bool - True if the string contains Japanese characters, False otherwise.
     """
     for ch in string:
         if 0x3040 < ord(ch) < 0x30FF:
@@ -26,11 +26,11 @@ def is_japanese(string):
 
 def detect_language(sentence, *, low_memory: bool = True):
     """
-    Detect the language of the given sentence.
+    Detect language.
 
-    :param sentence: The sentence to detect the language of.
-    :param low_memory: Whether to use low memory mode (default: True).
-    :return: Language code in uppercase (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
+    :param sentence: str - The sentence to detect the language of.
+    :param low_memory: bool - Whether to use low memory mode (default: True).
+    :return: str - Language code in uppercase (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
     """
     lang_code = detect(sentence, low_memory=low_memory).get("lang").upper()
     if lang_code == "JA" and not is_japanese(sentence):
@@ -40,12 +40,12 @@ def detect_language(sentence, *, low_memory: bool = True):
 
 def detect_langs(sentence, *, low_memory: bool = True):
     """
-    Detect the language of the given sentence.
+    Detect language.
     This function is deprecated. Use `detect_language` instead.
 
-    :param sentence: The sentence to detect the language of.
-    :param low_memory: Whether to use low memory mode (default: True).
-    :return: Language code in uppercase (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
+    :param sentence: str - The sentence to detect the language of.
+    :param low_memory: bool - Whether to use low memory mode (default: True).
+    :return: str - Language code in uppercase (e.g., ZH, EN, JA, KO, FR, DE, ES, ...).
     """
     logging.warning("The `detect_langs` function is deprecated. Use `detect_language` instead.")
     return detect_language(sentence, low_memory=low_memory)
