@@ -32,8 +32,8 @@ def get_model_map(low_memory=False) -> tuple:
     """
     Get the model map based on the low_memory flag.
 
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
-    :return: A tuple containing the mode, cache path, model name, and model URL.
+    :param low_memory: Use low memory model if True.
+    :return: Tuple of mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -48,9 +48,9 @@ def get_model_loaded(
     """
     Load the appropriate model based on the low_memory flag.
 
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param low_memory: Use low memory model if True.
     :param download_proxy: Proxy URL for downloading the model.
-    :return: The loaded fastText model.
+    :return: Loaded fastText model.
     :raises Exception: If there is an error loading or downloading the model.
     """
     mode, cache, name, url = get_model_map(low_memory)
@@ -84,13 +84,10 @@ def detect(text: str, *,
     """
     Detect the language of the given text.
 
-    Assumes the input text is a non-empty string.
-
-    :param text: The text to detect the language of.
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param text: Text to detect the language of.
+    :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy URL for downloading the model.
-    :return: A dictionary containing the detected language and its confidence score.
-             Example: {"lang": "en", "score": 0.99}
+    :return: Dictionary with detected language and score, e.g., {"lang": "en", "score": 0.99}.
     :raises DetectError: If there is an error during language detection.
     """
     try:
@@ -116,16 +113,13 @@ def detect_multilingual(text: str, *,
     """
     Detect multiple languages in the given text.
 
-    Assumes the input text is a non-empty string.
-
-    :param text: The text to detect languages in.
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param text: Text to detect languages in.
+    :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy URL for downloading the model.
     :param k: Number of top predictions to return.
     :param threshold: Confidence score threshold for predictions.
     :param on_unicode_error: Error handling strategy for Unicode errors.
-    :return: A list of dictionaries, each containing a detected language and its confidence score.
-             Example: [{"lang": "en", "score": 0.99}, {"lang": "fr", "score": 0.01}]
+    :return: List of dictionaries with detected languages and scores, e.g., [{"lang": "en", "score": 0.99}, {"lang": "fr", "score": 0.01}].
     :raises DetectError: If there is an error during language detection.
     """
     try:
