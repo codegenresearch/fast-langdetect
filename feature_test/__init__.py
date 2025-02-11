@@ -3,8 +3,7 @@
 # @Author  : sudoskys
 # @File    : __init__.py.py
 # @Software: PyCharm
-from fast_langdetect import detect, detect_multilingual, detect_langs
-from fast_langdetect import parse_sentence
+from fast_langdetect import detect_language, detect_multilingual, parse_sentence
 
 # Testing sentence parsing
 print(parse_sentence("你好世界"))  # Expected output: parsed sentence structure
@@ -12,17 +11,17 @@ print(parse_sentence("你好世界！Hello, world！Привет, мир！"))  
 
 # Testing multilingual detection
 # Expected output: list of dictionaries with language and score
-print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))
+print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))  # Expected output: [{'lang': 'en', 'score': ...}, {'lang': 'zh', 'score': ...}, {'lang': 'ru', 'score': ...}]
 
 # Testing single language detection
-print(detect("hello world"))  # Expected output: 'en'
-print(detect("你好世界"))  # Expected output: 'zh'
-print(detect("こんにちは世界"))  # Expected output: 'ja'
-print(detect("안녕하세요 세계"))  # Expected output: 'ko'
-print(detect("Bonjour le monde"))  # Expected output: 'fr'
-print(detect("Hallo Welt"))  # Expected output: 'de'
-print(detect("Esto es una prueba en español"))  # Expected output: 'es'
-print(detect("これらの機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等"))  # Expected output: 'zh'
-
-# Testing language probabilities
-print(detect_langs("Привет, мир!"))  # Expected output: list of languages with probabilities
+print(detect_language("hello world"))  # Expected output: 'EN'
+print(detect_language("你好世界"))  # Expected output: 'ZH'
+print(detect_language("こんにちは世界"))  # Expected output: 'JA'
+print(detect_language("안녕하세요 세계"))  # Expected output: 'KO'
+print(detect_language("Bonjour le monde"))  # Expected output: 'FR'
+print(detect_language("Hallo Welt"))  # Expected output: 'DE'
+print(detect_language("Esto es una prueba en español"))  # Expected output: 'ES'
+print(detect_language("これらの機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等"))  # Expected output: 'ZH'
+print(detect_language("Ciao, mondo"))  # Expected output: 'IT'
+print(detect_language("Olá, mundo"))  # Expected output: 'PT'
+print(detect_language("Привет, мир!"))  # Expected output: 'RU'
