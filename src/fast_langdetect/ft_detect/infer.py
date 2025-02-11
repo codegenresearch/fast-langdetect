@@ -57,19 +57,19 @@ def get_model_loaded(low_memory=False, download_proxy=None):
         if Path(model_path).is_dir():
             raise Exception(f"{model_path} is a directory")
         try:
-            loaded = fasttext.load_model(model_path)
-            MODELS[mode] = loaded
+            loaded_model = fasttext.load_model(model_path)
+            MODELS[mode] = loaded_model
         except Exception as e:
             logger.error(f"Error loading model {model_path}: {e}")
             download(url=url, folder=cache, filename=name, proxy=download_proxy)
             raise e
         else:
-            return loaded
+            return loaded_model
 
     download(url=url, folder=cache, filename=name, proxy=download_proxy, retry_max=3, timeout=20)
-    loaded = fasttext.load_model(model_path)
-    MODELS[mode] = loaded
-    return loaded
+    loaded_model = fasttext.load_model(model_path)
+    MODELS[mode] = loaded_model
+    return loaded_model
 
 
 def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = None) -> Dict[str, Union[str, float]]:
@@ -137,6 +137,7 @@ def test_detect_multilingual_low_memory():
     assert any(item["lang"] == "zh" for item in result), "Multilingual detection error for Chinese in mixed text"
     assert any(item["lang"] == "ru" for item in result), "Multilingual detection error for Russian in mixed text"
 
+
 def test_detect_low_memory():
     result = detect("hello world", low_memory=True)
     assert result["lang"] == "en", "Detection error for English"
@@ -154,6 +155,7 @@ def test_detect_low_memory():
     assert result["lang"] == "es", "Detection error for Spanish"
     result = detect("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等", low_memory=True)
     assert result["lang"] == "zh", "Detection error for Traditional Chinese"
+
 
 def test_failed_example_low_memory():
     try:
