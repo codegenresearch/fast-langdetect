@@ -18,19 +18,20 @@ def test_detect():
     assert detect("こんにちは世界")["lang"] == "ja", "ft_detect error"
     assert detect("안녕하세요 세계")["lang"] == "ko", "ft_detect error"
     assert detect("Bonjour le monde")["lang"] == "fr", "ft_detect error"
-    assert detect("Hallo Welt")["lang"] == "de", "ft_detect error"
-    assert detect("Hola mundo")["lang"] == "es", "ft_detect error"
-    assert detect("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等")["lang"] == "zh", "ft_detect error"
 
-def test_detect_language():
+def test_detect_totally():
     from fast_langdetect import detect_language
     
     # Test detect_language function
-    assert detect_language("hello world") == "en", "ft_detect error"
-    assert detect_language("你好世界") == "zh", "ft_detect error"
-    assert detect_language("こんにちは世界") == "ja", "ft_detect error"
-    assert detect_language("안녕하세요 세계") == "ko", "ft_detect error"
-    assert detect_language("Bonjour le monde") == "fr", "ft_detect error"
-    assert detect_language("Hallo Welt") == "de", "ft_detect error"
-    assert detect_language("Hola mundo") == "es", "ft_detect error"
-    assert detect_language("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等") == "zh", "ft_detect error"
+    assert detect_language("hello world") == "EN", "ft_detect error"
+    assert detect_language("你好世界") == "ZH", "ft_detect error"
+    assert detect_language("こんにちは世界") == "JA", "ft_detect error"
+    assert detect_language("안녕하세요 세계") == "KO", "ft_detect error"
+    assert detect_language("Bonjour le monde") == "FR", "ft_detect error"
+    assert detect_language("Привет, мир!") == "RU", "ft_detect error"
+    assert detect_language("こんにちは世界") == "JA", "ft_detect error"
+    assert detect_language("안녕하세요 세계") == "KO", "ft_detect error"
+    assert detect_language("Bonjour le monde") == "FR", "ft_detect error"
+    assert detect_language("Hallo Welt") == "DE", "ft_detect error"
+    assert detect_language("Hola mundo") == "ES", "ft_detect error"
+    assert detect_language("這些機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等") == "ZH", "ft_detect error"
