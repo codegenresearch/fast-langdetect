@@ -16,7 +16,7 @@ MODELS = {"low_mem": None, "high_mem": None}
 FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 try:
-    # Suppress warnings from fastText as it does not use the python 'warnings' package properly
+    # Suppress warnings from fastText
     fasttext.FastText.eprint = lambda *args, **kwargs: None
 except Exception:
     pass
@@ -29,7 +29,7 @@ class DetectError(Exception):
 
 def get_model_map(low_memory=False) -> tuple:
     """
-    Get the model map based on the low_memory flag.
+    Get model map based on low_memory flag.
 
     :param low_memory: Use low memory model if True.
     :return: Tuple of mode, cache path, model name, and model URL.
@@ -40,12 +40,9 @@ def get_model_map(low_memory=False) -> tuple:
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def get_model_loaded(
-        low_memory: bool = False,
-        download_proxy: str = None
-) -> fasttext.FastText._FastText:
+def load_model(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
     """
-    Load the appropriate model based on the low_memory flag.
+    Load the appropriate model based on low_memory flag.
 
     :param low_memory: Use low memory model if True.
     :param download_proxy: Proxy URL for downloading the model.
@@ -83,26 +80,23 @@ def detect(text: str, *,
     """
     Detect the language of the given text.
 
-    Assumes the input text is a single line of text.
+    Assumes the input text is a single line.
 
     :param text: Text to detect the language of.
     :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy URL for downloading the model.
-    :return: Dictionary with detected language and score, e.g., {"lang": "en", "score": 0.99}.
+    :return: Dictionary with detected language and score.
     :raises DetectError: If there is an error during language detection.
     :raises ValueError: If the input text contains multiple lines.
     """
     if "\n" in text:
         raise ValueError("Input text must be a single line.")
     try:
-        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+        model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
         label = labels[0].replace("__label__", '')
         score = min(float(scores[0]), 1.0)
-        return {
-            "lang": label,
-            "score": score,
-        }
+        return {"lang": label, "score": score}
     except Exception as e:
         raise DetectError(f"Failed to detect language: {e}")
 
@@ -113,7 +107,7 @@ def detect_multilingual(text: str, *,
                         k: int = 5,
                         threshold: float = 0.0,
                         on_unicode_error: str = "strict"
-                        ) -> List[Dict[str, Union[str, float]]]:
+                        ) -> List[dict]:
     """
     Detect multiple languages in the given text.
 
@@ -123,20 +117,17 @@ def detect_multilingual(text: str, *,
     :param k: Number of top predictions to return.
     :param threshold: Confidence score threshold for predictions.
     :param on_unicode_error: Error handling strategy for Unicode errors.
-    :return: List of dictionaries with detected languages and scores, e.g., [{"lang": "en", "score": 0.99}, {"lang": "fr", "score": 0.01}].
+    :return: List of dictionaries with detected languages and scores.
     :raises DetectError: If there is an error during language detection.
     """
     try:
-        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
+        model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
         detect_result = []
         for label, score in zip(labels, scores):
             label = label.replace("__label__", '')
             score = min(float(score), 1.0)
-            detect_result.append({
-                "lang": label,
-                "score": score,
-            })
+            detect_result.append({"lang": label, "score": score})
         return sorted(detect_result, key=lambda i: i['score'], reverse=True)
     except Exception as e:
         raise DetectError(f"Failed to detect multiple languages: {e}")
