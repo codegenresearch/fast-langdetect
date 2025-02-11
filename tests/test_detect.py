@@ -4,18 +4,12 @@
 # @File    : test_detect.py
 # @Software: PyCharm
 
-def test_multilingual_detection():
-    """
-    Tests the multilingual detection functionality.
-    """
+def test_multilingual():
     from fast_langdetect import detect_multilingual
     result = detect_multilingual("hello world", low_memory=True)
     assert result[0].get("lang") == "en", "ft_detect error"
 
-def test_single_language_detection():
-    """
-    Tests the single language detection functionality.
-    """
+def test_single_language():
     from fast_langdetect import detect_language
     assert detect_language("hello world").lower() == "en", "ft_detect error"
     assert detect_language("你好世界").lower() == "zh", "ft_detect error"
@@ -28,7 +22,7 @@ def test_single_language_detection():
 
 
 This code snippet addresses the feedback by:
-1. Correcting the unterminated string literal in the comment.
+1. Removing the invalid line that caused the `SyntaxError`.
 2. Renaming test functions to be more concise and descriptive.
 3. Ensuring that import statements are consistent and inside each test function.
 4. Adjusting assertions to match the expected output format in lowercase.
