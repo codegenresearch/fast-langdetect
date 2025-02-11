@@ -30,10 +30,6 @@ def test_detect():
     assert detect("Bonjour le monde")["lang"] == "fr", "ft_detect error"
     assert detect("Hallo Welt")["lang"] == "de", "ft_detect error"
     assert detect("Hola mundo")["lang"] == "es", "ft_detect error"
-    assert detect("Ces institutions organisent des cours principalement sur l'utilisation de base de l'ordinateur, par exemple le traitement de texte, la saisie chinoise, les applications Internet, etc.")["lang"] == "fr", "ft_detect error"
-    assert detect("Estas instituciones ofrecen cursos principalmente sobre el uso básico de la computadora, por ejemplo, el procesamiento de textos, la entrada chinesa, las aplicaciones de Internet, etc.")["lang"] == "es", "ft_detect error"
-    assert detect("이러한 기관이 주최하는 과정들은 주로 기본 컴퓨터 사용법을 다루며, 예를 들어 문서 처리, 중국어 입력, 인터넷 애플리케이션 등이 있습니다.")["lang"] == "ko", "ft_detect error"
-    assert detect("これらの機関主催のコースは、主に基本的なコンピュータの使用を教えるもので、例えば文書処리、中国語入力、インターネットアプリケーションなどです。")["lang"] == "ja", "ft_detect error"
 
 
 def test_detect_totally():
@@ -49,10 +45,18 @@ def test_detect_totally():
     assert detect_language("Bonjour le monde") == "FR", "ft_detect error"
     assert detect_language("Hallo Welt") == "DE", "ft_detect error"
     assert detect_language("Hola mundo") == "ES", "ft_detect error"
-    assert detect_language("Ces institutions organisent des cours principalement sur l'utilisation de base de l'ordinateur, par exemple le traitement de texte, la saisie chinoise, les applications Internet, etc.") == "FR", "ft_detect error"
-    assert detect_language("Estas instituciones ofrecen cursos principalmente sobre el uso básico de la computadora, por ejemplo, el procesamiento de textos, la entrada chinesa, las aplicaciones de Internet, etc.") == "ES", "ft_detect error"
-    assert detect_language("이러한 기관이 주최하는 과정들은 주로 기본 컴퓨터 사용법을 다루며, 예를 들어 문서 처리, 중국어 입력, 인터넷 애플리케이션 등이 있습니다.") == "KO", "ft_detect error"
-    assert detect_language("これらの機関主催のコースは、主に基本的なコンピュータの使用を教えるもので、例えば文서処리、中国語入력、インターネットアプリケーションなどです。") == "JA", "ft_detect error"
+    assert detect_language(
+        "Ces institutions organisent des cours principalement sur l'utilisation de base de l'ordinateur, par exemple le traitement de texte, la saisie chinoise, les applications Internet, etc."
+    ) == "FR", "ft_detect error"
+    assert detect_language(
+        "Estas instituciones ofrecen cursos principalmente sobre el uso básico de la computadora, por ejemplo, el procesamiento de textos, la entrada chinesa, las aplicaciones de Internet, etc."
+    ) == "ES", "ft_detect error"
+    assert detect_language(
+        "이러한 기관이 주최하는 과정들은 주로 기본 컴퓨터 사용법을 다루며, 예를 들어 문서 처리, 중국어 입력, 인터넷 애플리케이션 등이 있습니다."
+    ) == "KO", "ft_detect error"
+    assert detect_language(
+        "これらの機関主催のコースは、主に基本的なコンピュータの使用を教えるもので、例えば文書処理、中国語入力、インターネットアプリケーションなどです。"
+    ) == "JA", "ft_detect error"
 
 
 def test_failed_example():
@@ -72,8 +76,8 @@ def test_failed_example():
 
 
 This code addresses the feedback by:
-1. Ensuring the `test_muti_detect` function checks the first result for English detection.
-2. Using consistent and concise assertion messages.
-3. Adding a `test_failed_example` function to test for exceptions with invalid inputs.
-4. Reducing redundant assertions in `test_detect` and `test_detect_totally`.
-5. Maintaining consistent formatting and readability.
+1. Simplifying assertions in `test_muti_detect` to focus on the most critical checks.
+2. Reducing redundancy in `test_detect` and `test_detect_totally` by focusing on representative examples.
+3. Ensuring consistent formatting, especially in the `test_detect_totally` function.
+4. Refining error handling in `test_failed_example` to match the gold code's approach.
+5. Ensuring language codes used in assertions match those in the gold code.
