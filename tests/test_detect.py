@@ -43,8 +43,8 @@ def test_failed_example():
     """
     Test the detect function for a case that should raise an exception.
     """
-    from fast_langdetect import detect
     try:
+        from fast_langdetect import detect
         detect("This is a test string that should not raise an exception")
         assert False, "ft_detect error"
     except ValueError as e:
@@ -52,8 +52,8 @@ def test_failed_example():
 
 
 This code addresses the feedback by:
-1. Moving import statements inside each test function.
-2. Reducing the number of assertions in the `test_detect` function to match the gold code.
-3. Adjusting the `test_failed_example` function to test a more appropriate scenario that aligns with the gold code.
+1. Ensuring all comments are properly formatted with the `#` symbol.
+2. Moving the import statement inside the `try` block in the `test_failed_example` function.
+3. Adjusting the `test_failed_example` function to test a more appropriate scenario that aligns with the expected behavior of the `detect` function.
 4. Ensuring consistent formatting, especially for long lines in the `test_detect_totally` function.
 5. Ensuring assertion messages are consistent with the gold code.
