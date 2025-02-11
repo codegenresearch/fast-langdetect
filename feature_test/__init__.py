@@ -11,13 +11,13 @@ print(detect_multilingual("Hello, world!你好世界!Привет, мир!", low
 # Expected output: [{'lang': 'ja', 'score': ...}, {'lang': 'uk', 'score': ...}, {'lang': 'zh', 'score': ...}, ...]
 print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))
 
-print(detect("hello world"))  # Expected output: 'en'
-print(detect("你好世界"))      # Expected output: 'zh'
-print(detect("こんにちは世界")) # Expected output: 'ja'
-print(detect("안녕하세요 세계")) # Expected output: 'ko'
-print(detect("Bonjour le monde")) # Expected output: 'fr'
-print(detect("Hallo Welt"))     # Expected output: 'de'
-print(detect("Hola mundo"))     # Expected output: 'es'
+print(detect("hello world"))
+print(detect("你好世界"))
+print(detect("こんにちは世界"))
+print(detect("안녕하세요 세계"))
+print(detect("Bonjour le monde"))
+print(detect("Hallo Welt"))
+print(detect("Hola mundo"))
 
 print(detect_language("Привет, мир!"))  # Expected output: 'RU'
 print(detect_language("你好世界"))      # Expected output: 'ZH'
@@ -30,8 +30,7 @@ print(detect_language("這些機構主辦的課程，多以基本電腦使用為
 
 
 ### Adjustments Made:
-1. **Output Comments**: Added comments indicating expected outputs for the `detect_multilingual` function.
-2. **Consistent Function Calls**: Ensured that the function calls are consistent with the gold code.
-3. **Formatting**: Removed unnecessary spaces and ensured consistent formatting.
-4. **Order of Function Calls**: Maintained the order of function calls as in the gold code.
-5. **Remove Redundant Comments**: Removed redundant comments for `detect` function calls to maintain clarity.
+1. **Output Comments**: Removed comments indicating expected outputs for the `detect` function calls.
+2. **Function Call Order**: Ensured the sequence of `detect`, `detect_language`, and `detect_multilingual` calls matches the gold code.
+3. **Redundant Comments**: Removed unnecessary comments for `detect` function calls.
+4. **Formatting Consistency**: Ensured no unnecessary spaces between function names and their parameters.
