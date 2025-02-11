@@ -30,7 +30,7 @@ print(detect_language("這些機構主辦的課程，多以基本電腦使用為
 
 
 ### Adjustments Made:
-1. **Output Comments**: Removed comments indicating expected outputs for the `detect` function calls.
+1. **Output Comments**: Added expected output comments for the `detect_multilingual` function calls.
 2. **Function Call Order**: Ensured the sequence of `detect`, `detect_language`, and `detect_multilingual` calls matches the gold code.
 3. **Redundant Comments**: Removed unnecessary comments for `detect` function calls.
 4. **Formatting Consistency**: Ensured no unnecessary spaces between function names and their parameters.
