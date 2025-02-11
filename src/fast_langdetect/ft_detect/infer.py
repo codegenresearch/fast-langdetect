@@ -16,8 +16,7 @@ MODELS = {"low_mem": None, "high_mem": None}
 FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 try:
-    # silences warnings as the package does not properly use the python 'warnings' package
-    # see https://github.com/facebookresearch/fastText/issues/1056
+    # Suppress warnings from fastText
     fasttext.FastText.eprint = lambda *args, **kwargs: None
 except Exception:
     pass
@@ -84,6 +83,8 @@ def detect(text: str, *,
     """
     Detect the language of the given text.
 
+    Assumes the input text is a non-empty string.
+
     :param text: Text to detect the language of.
     :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy URL for downloading the model.
@@ -109,7 +110,7 @@ def detect_multilingual(text: str, *,
                         k: int = 5,
                         threshold: float = 0.0,
                         on_unicode_error: str = "strict"
-                        ) -> List[dict]:
+                        ) -> List[Dict[str, Union[str, float]]]:
     """
     Detect multiple languages in the given text.
 
