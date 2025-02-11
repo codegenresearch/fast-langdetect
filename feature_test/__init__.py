@@ -24,21 +24,27 @@ print(detect("你好，世界！"))  # Expected output: 'zh'
 print(detect_language("你好，世界！"))  # Expected output: 'ZH'
 print(detect("¡Hola, mundo!"))  # Expected output: 'es'
 print(detect_language("¡Hola, mundo!"))  # Expected output: 'ES'
+print(detect("Hallo Welt"))  # Expected output: 'de'
+print(detect_language("Hallo Welt"))  # Expected output: 'DE'
+print(detect("Cześć świecie"))  # Expected output: 'pl'
+print(detect_language("Cześć świecie"))  # Expected output: 'PL'
+print(detect("Olá, mundo"))  # Expected output: 'pt'
+print(detect_language("Olá, mundo"))  # Expected output: 'PT'
 
 print("\nDetecting multiple languages:")
 print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))
-# Expected output: [{'lang': 'en'}, {'lang': 'zh'}, {'lang': 'ru'}]
+# Expected output: [{'lang': 'en', 'score': ...}, {'lang': 'zh', 'score': ...}, {'lang': 'ru', 'score': ...}]
 print(detect_multilingual("Bonjour le monde!こんにちは世界!안녕하세요 세계!"))
-# Expected output: [{'lang': 'fr'}, {'lang': 'ja'}, {'lang': 'ko'}]
+# Expected output: [{'lang': 'fr', 'score': ...}, {'lang': 'ja', 'score': ...}, {'lang': 'ko', 'score': ...}]
 print(detect_multilingual("Hallo Welt!Cześć świecie!Olá, mundo!"))
-# Expected output: [{'lang': 'de'}, {'lang': 'pl'}, {'lang': 'pt'}]
+# Expected output: [{'lang': 'de', 'score': ...}, {'lang': 'pl', 'score': ...}, {'lang': 'pt', 'score': ...}]
 print(detect_multilingual("¡Hola, mundo!Bonjour le monde!Привет, мир!"))
-# Expected output: [{'lang': 'es'}, {'lang': 'fr'}, {'lang': 'ru'}]
+# Expected output: [{'lang': 'es', 'score': ...}, {'lang': 'fr', 'score': ...}, {'lang': 'ru', 'score': ...}]
 
 
 This code snippet addresses the feedback by:
-1. Removing redundant imports.
-2. Simplifying the output to focus on demonstrating the functionality of the language detection methods.
-3. Ensuring the output format of `detect_multilingual` includes both language and score.
-4. Including a comment in Chinese to describe the languages being tested.
-5. Focusing on key examples of using `detect_language` without redundancy.
+1. Ensuring the output of `detect_multilingual` includes both the language and the score.
+2. Adding more diverse examples to showcase the functionality of the `detect_language` method.
+3. Including a comment in Chinese to describe the languages being tested.
+4. Double-checking to ensure only necessary imports are included.
+5. Organizing the code with a clear flow and logical order.
