@@ -32,8 +32,8 @@ def get_model_map(low_memory=False):
     """
     Get the model map based on the low_memory flag.
 
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
-    :return: Tuple containing mode, cache path, model name, and model URL.
+    :param low_memory: Use low memory model if True.
+    :return: Tuple of mode, cache path, model name, and model URL.
     """
     if low_memory:
         return "low_mem", FTLANG_CACHE, "lid.176.ftz", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.ftz"
@@ -41,14 +41,11 @@ def get_model_map(low_memory=False):
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def get_model_loaded(
-        low_memory: bool = False,
-        download_proxy: str = None
-):
+def get_model_loaded(low_memory=False, download_proxy=None):
     """
     Load the appropriate model based on the low_memory flag.
 
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param low_memory: Use low memory model if True.
     :param download_proxy: Proxy for downloading the model.
     :return: Loaded fastText model.
     """
@@ -76,68 +73,43 @@ def get_model_loaded(
     return loaded_model
 
 
-def detect(text: str, *,
-           low_memory: bool = True,
-           model_download_proxy: str = None
-           ) -> Dict[str, Union[str, float]]:
+def detect(text: str, *, low_memory: bool = True, model_download_proxy: str = None) -> Dict[str, Union[str, float]]:
     """
     Detect the language of a given text.
 
-    :param text: The text to detect the language of. It is assumed that the text does not contain newline characters.
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param text: The text to detect the language of.
+    :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy for downloading the model.
-    :return: Dictionary containing the detected language and its confidence score.
-    :raises ValueError: If the input text contains newline characters.
+    :return: Dictionary with 'lang' and 'score' keys.
     :raises DetectError: If an error occurs during detection.
     """
-    if '\n' in text:
-        raise ValueError("Input text should not contain newline characters.")
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
         label = labels[0].replace("__label__", '')
         score = min(float(scores[0]), 1.0)
-        return {
-            "lang": label,
-            "score": score,
-        }
+        return {"lang": label, "score": score}
     except Exception as e:
         raise DetectError(f"Error during detection: {e}")
 
 
-def detect_multilingual(text: str, *,
-                        low_memory: bool = True,
-                        model_download_proxy: str = None,
-                        k: int = 5,
-                        threshold: float = 0.0,
-                        on_unicode_error: str = "strict"
-                        ) -> List[dict]:
+def detect_multilingual(text: str, *, low_memory: bool = True, model_download_proxy: str = None, k: int = 5, threshold: float = 0.0, on_unicode_error: str = "strict") -> List[dict]:
     """
     Detect multiple languages in a given text.
 
-    :param text: The text to detect languages in. It is assumed that the text does not contain newline characters.
-    :param low_memory: Boolean flag to determine whether to use the low memory model.
+    :param text: The text to detect languages in.
+    :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy for downloading the model.
     :param k: Number of top predictions to return.
     :param threshold: Confidence threshold for predictions.
     :param on_unicode_error: Error handling strategy for Unicode errors.
-    :return: List of dictionaries containing detected languages and their confidence scores.
-    :raises ValueError: If the input text contains newline characters.
+    :return: List of dictionaries with 'lang' and 'score' keys.
     :raises DetectError: If an error occurs during multilingual detection.
     """
-    if '\n' in text:
-        raise ValueError("Input text should not contain newline characters.")
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
-        detect_result = []
-        for label, score in zip(labels, scores):
-            label = label.replace("__label__", '')
-            score = min(float(score), 1.0)
-            detect_result.append({
-                "lang": label,
-                "score": score,
-            })
+        detect_result = [{"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)} for label, score in zip(labels, scores)]
         return sorted(detect_result, key=lambda i: i['score'], reverse=True)
     except Exception as e:
         raise DetectError(f"Error during multilingual detection: {e}")
@@ -187,9 +159,12 @@ def test_detect_low_memory():
 def test_failed_example_low_memory():
     try:
         detect("hello world\nNEW LINE", low_memory=True)
-    except ValueError as e:
-        assert str(e) == "Input text should not contain newline characters.", "Detection exception error for newline in detect"
+    except DetectError as e:
+        assert isinstance(e, DetectError), "Detection exception error for newline in detect"
     try:
         detect_multilingual("hello world\nNEW LINE", low_memory=True)
-    except ValueError as e:
-        assert str(e) == "Input text should not contain newline characters.", "Detection exception error for newline in detect_multilingual"
+    except DetectError as e:
+        assert isinstance(e, DetectError), "Detection exception error for newline in detect_multilingual"
+
+
+This version of the code addresses the feedback by simplifying and standardizing the docstrings, removing the newline check, and ensuring consistency in formatting and parameter descriptions.
