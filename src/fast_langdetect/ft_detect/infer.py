@@ -16,7 +16,7 @@ MODELS = {"low_mem": None, "high_mem": None}
 FTLANG_CACHE = os.getenv("FTLANG_CACHE", "/tmp/fasttext-langdetect")
 
 try:
-    # Suppress warnings from fastText
+    # Suppress warnings from fastText as it does not use the python 'warnings' package properly
     fasttext.FastText.eprint = lambda *args, **kwargs: None
 except Exception:
     pass
@@ -83,14 +83,17 @@ def detect(text: str, *,
     """
     Detect the language of the given text.
 
-    Assumes the input text is a non-empty string.
+    Assumes the input text is a single line of text.
 
     :param text: Text to detect the language of.
     :param low_memory: Use low memory model if True.
     :param model_download_proxy: Proxy URL for downloading the model.
     :return: Dictionary with detected language and score, e.g., {"lang": "en", "score": 0.99}.
     :raises DetectError: If there is an error during language detection.
+    :raises ValueError: If the input text contains multiple lines.
     """
+    if "\n" in text:
+        raise ValueError("Input text must be a single line.")
     try:
         model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
