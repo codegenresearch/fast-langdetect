@@ -28,7 +28,7 @@ def detect_language(sentence, *, low_memory: bool = True):
 
 def detect_langs(sentence, *, low_memory: bool = True):
     """
-    Detect language code with a deprecation warning
+    Detect language code
     :param sentence: str sentence
     :param low_memory: bool (default: True) whether to use low memory mode
     :return: ZH, EN, JA, KO, FR, DE, ES, .... (two uppercase letters)
