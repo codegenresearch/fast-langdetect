@@ -29,7 +29,7 @@ class DetectError(Exception):
 
 def get_model_map(low_memory=False) -> tuple:
     """
-    Get model map based on low_memory flag.
+    Get the model map based on the low_memory flag.
 
     :param low_memory: Use low memory model if True.
     :return: Tuple of mode, cache path, model name, and model URL.
@@ -40,9 +40,9 @@ def get_model_map(low_memory=False) -> tuple:
         return "high_mem", FTLANG_CACHE, "lid.176.bin", "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
 
 
-def load_model(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
+def get_model_loaded(low_memory: bool = False, download_proxy: str = None) -> fasttext.FastText._FastText:
     """
-    Load the appropriate model based on low_memory flag.
+    Load the appropriate model based on the low_memory flag.
 
     :param low_memory: Use low memory model if True.
     :param download_proxy: Proxy URL for downloading the model.
@@ -92,7 +92,7 @@ def detect(text: str, *,
     if "\n" in text:
         raise ValueError("Input text must be a single line.")
     try:
-        model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
+        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text)
         label = labels[0].replace("__label__", '')
         score = min(float(scores[0]), 1.0)
@@ -121,13 +121,10 @@ def detect_multilingual(text: str, *,
     :raises DetectError: If there is an error during language detection.
     """
     try:
-        model = load_model(low_memory=low_memory, download_proxy=model_download_proxy)
+        model = get_model_loaded(low_memory=low_memory, download_proxy=model_download_proxy)
         labels, scores = model.predict(text=text, k=k, threshold=threshold, on_unicode_error=on_unicode_error)
-        detect_result = []
-        for label, score in zip(labels, scores):
-            label = label.replace("__label__", '')
-            score = min(float(score), 1.0)
-            detect_result.append({"lang": label, "score": score})
+        detect_result = [{"lang": label.replace("__label__", ''), "score": min(float(score), 1.0)}
+                         for label, score in zip(labels, scores)]
         return sorted(detect_result, key=lambda i: i['score'], reverse=True)
     except Exception as e:
         raise DetectError(f"Failed to detect multiple languages: {e}")
