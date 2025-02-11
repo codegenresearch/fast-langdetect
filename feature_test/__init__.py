@@ -8,6 +8,8 @@ from fast_langdetect import detect, detect_multilingual, detect_language
 
 # Expected output: [{'lang': 'ja', 'score': ...}, {'lang': 'uk', 'score': ...}, {'lang': 'zh', 'score': ...}, ...]
 print(detect_multilingual("Hello, world!你好世界!Привет, мир!", low_memory=False))
+# Expected output: [{'lang': 'ja', 'score': ...}, {'lang': 'uk', 'score': ...}, {'lang': 'zh', 'score': ...}, ...]
+print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))
 
 print(detect("hello world"))  # Expected output: 'en'
 print(detect("你好世界"))      # Expected output: 'zh'
