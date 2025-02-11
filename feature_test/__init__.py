@@ -11,7 +11,8 @@ print(parse_sentence("你好世界"))  # Expected output: parsed sentence struct
 print(parse_sentence("你好世界！Hello, world！Привет, мир！"))  # Expected output: parsed sentence structure
 
 # Testing multilingual detection
-print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))  # Expected output: list of detected languages
+# Expected output: list of dictionaries with language and score
+print(detect_multilingual("Hello, world!你好世界!Привет, мир!"))
 
 # Testing single language detection
 print(detect("hello world"))  # Expected output: 'en'
@@ -20,6 +21,7 @@ print(detect("こんにちは世界"))  # Expected output: 'ja'
 print(detect("안녕하세요 세계"))  # Expected output: 'ko'
 print(detect("Bonjour le monde"))  # Expected output: 'fr'
 print(detect("Hallo Welt"))  # Expected output: 'de'
+print(detect("Esto es una prueba en español"))  # Expected output: 'es'
 print(detect("これらの機構主辦的課程，多以基本電腦使用為主，例如文書處理、中文輸入、互聯網應用等"))  # Expected output: 'zh'
 
 # Testing language probabilities
